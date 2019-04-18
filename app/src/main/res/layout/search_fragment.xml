@@ -32,6 +32,14 @@
             tools:layout_editor_absoluteY="133dp" />
 
         <TextView
+            android:id="@+id/keywordError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Please enter mandatory field"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -125,7 +133,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="invisible">
+            android:visibility="gone">
 
             <EditText
                 android:id="@+id/milesFromEditText"
@@ -168,6 +176,15 @@
                     android:enabled="false"
                     android:hint="zipcode"
                     android:inputType="number" />
+
+                <TextView
+                    android:id="@+id/zipcodeError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Please enter mandatory field"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:visibility="gone" />
             </LinearLayout>
 
         </LinearLayout>

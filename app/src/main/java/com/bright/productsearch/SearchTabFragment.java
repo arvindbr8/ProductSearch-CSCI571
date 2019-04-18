@@ -18,14 +18,21 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextClock;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +41,7 @@ public class SearchTabFragment extends Fragment {
     private static final String TAG = "Search Tab";
 
     private EditText keywordText;
+    private TextView keywordError;
     private Spinner categoryDropdown;
     private CheckBox newCheckBox;
     private CheckBox usedCheckBox;
@@ -47,6 +55,8 @@ public class SearchTabFragment extends Fragment {
     private RadioButton zipcodeRadioButton;
 
     private EditText zipcodeEditText;
+    private TextView zipcodeError;
+
     private Button searchButton;
     private Button clearButton;
     private String zipcode;
@@ -101,7 +111,7 @@ public class SearchTabFragment extends Fragment {
         currentLocationRadioButton = view.findViewById(R.id.currentLocationRadioButton);
         zipcodeRadioButton = view.findViewById(R.id.zipcodeRadioButton);
         zipcodeEditText = view.findViewById(R.id.zipcodeEditText);
-
+        zipcodeError = view.findViewById(R.id.zipcodeError);
         currentLocationRadioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -124,6 +134,7 @@ public class SearchTabFragment extends Fragment {
 
         searchButton = view.findViewById(R.id.searchButton);
         keywordText = view.findViewById(R.id.keywordEditText);
+        keywordError = view.findViewById(R.id.keywordError);
         newCheckBox = view.findViewById(R.id.conditionNewCheckBox);
         usedCheckBox = view.findViewById(R.id.conditionUsedCheckBox);
         unspecifiedCheckBox = view.findViewById(R.id.conditionUnspecifiedCheckBox);
@@ -131,12 +142,60 @@ public class SearchTabFragment extends Fragment {
         freeShippingCheckBox = view.findViewById(R.id.shippingFSCheckBox);
         milesFromText = view.findViewById(R.id.milesFromEditText);
 
-        if(currentLocationRadioButton.isChecked()){
-            zipcode = "90007";
-        } else zipcode = new String(zipcodeEditText.getText().toString());
+
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        final String[] ip_zipcode = new String[1];
+        JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, "http://ip-api.com/json", null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    ip_zipcode[0] = response.getString("zip");
+                    Log.d("IP",ip_zipcode[0]);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        queue.add(getRequest);
+
+
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //validation
+                if(keywordText.getText().toString().length() == 0){
+                    keywordError.setVisibility(View.VISIBLE);
+                    Toast.makeText(getContext(), "Please fix all fields with error", Toast.LENGTH_SHORT).show();
+                    return;
+                } else
+                    keywordError.setVisibility(View.GONE);
+
+                if (nearbySearchCheckBox.isChecked() && zipcodeRadioButton.isChecked()){
+                    if (zipcodeEditText.getText().toString().length() == 0){
+                        zipcodeError.setVisibility(View.VISIBLE);
+                        Toast.makeText(getContext(), "Please fix all fields with error", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else
+                        zipcodeError.setVisibility(View.GONE);
+                }
+
+
+                if(currentLocationRadioButton.isChecked())
+                    zipcode = ip_zipcode[0];
+                else
+                    zipcode = new String(zipcodeEditText.getText().toString());
+
+                if (milesFromText.getText().toString().length() == 0)
+                    milesFromText.setText("10");
+
+
                 StringBuilder url = new StringBuilder("https://csci571-hw8.azurewebsites.net/api/search?");
                 url.append("keywords="+keywordText.getText().toString());
                 url.append("&zipcode="+zipcode);
