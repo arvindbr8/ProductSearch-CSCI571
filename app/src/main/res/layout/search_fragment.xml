@@ -167,15 +167,13 @@
                     android:layout_height="wrap_content"
                     android:visibility="visible" />
 
-                <EditText
-                    android:id="@+id/zipcodeEditText"
+                <AutoCompleteTextView
+                    android:id="@+id/zipcodeAutoTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:ems="10"
-                    android:enabled="false"
-                    android:hint="zipcode"
-                    android:inputType="number" />
+                    android:completionThreshold="0"
+                    android:hint="zipcode" />
 
                 <TextView
                     android:id="@+id/zipcodeError"

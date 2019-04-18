@@ -9,8 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
-import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,10 +26,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -54,8 +51,8 @@ public class SearchTabFragment extends Fragment {
     private RadioButton currentLocationRadioButton;
     private RadioButton zipcodeRadioButton;
 
-    private EditText zipcodeEditText;
     private TextView zipcodeError;
+    private AutoCompleteTextView zipcodeAutoText;
 
     private Button searchButton;
     private Button clearButton;
@@ -101,7 +98,7 @@ public class SearchTabFragment extends Fragment {
         nearbySearchCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked)
+                if (isChecked)
                     nearbySearchLayout.setVisibility(View.VISIBLE);
                 else
                     nearbySearchLayout.setVisibility(View.INVISIBLE);
@@ -110,13 +107,13 @@ public class SearchTabFragment extends Fragment {
 
         currentLocationRadioButton = view.findViewById(R.id.currentLocationRadioButton);
         zipcodeRadioButton = view.findViewById(R.id.zipcodeRadioButton);
-        zipcodeEditText = view.findViewById(R.id.zipcodeEditText);
+        zipcodeAutoText = view.findViewById(R.id.zipcodeAutoTextView);
         zipcodeError = view.findViewById(R.id.zipcodeError);
         currentLocationRadioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    zipcodeEditText.setEnabled(false);
+                if (isChecked) {
+                    zipcodeAutoText.setEnabled(false);
                     zipcodeRadioButton.setChecked(false);
                 }
             }
@@ -125,8 +122,8 @@ public class SearchTabFragment extends Fragment {
         zipcodeRadioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    zipcodeEditText.setEnabled(true);
+                if (isChecked) {
+                    zipcodeAutoText.setEnabled(true);
                     currentLocationRadioButton.setChecked(false);
                 }
             }
@@ -150,7 +147,7 @@ public class SearchTabFragment extends Fragment {
             public void onResponse(JSONObject response) {
                 try {
                     ip_zipcode[0] = response.getString("zip");
-                    Log.d("IP",ip_zipcode[0]);
+                    Log.d("IP", ip_zipcode[0]);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -164,21 +161,21 @@ public class SearchTabFragment extends Fragment {
 
         queue.add(getRequest);
 
-
+        zipcodeAutoText.setAdapter(new AutoCompleteAdapter(getContext(), android.R.layout.simple_dropdown_item_1line));
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //validation
-                if(keywordText.getText().toString().length() == 0){
+                if (keywordText.getText().toString().length() == 0) {
                     keywordError.setVisibility(View.VISIBLE);
                     Toast.makeText(getContext(), "Please fix all fields with error", Toast.LENGTH_SHORT).show();
                     return;
                 } else
                     keywordError.setVisibility(View.GONE);
 
-                if (nearbySearchCheckBox.isChecked() && zipcodeRadioButton.isChecked()){
-                    if (zipcodeEditText.getText().toString().length() == 0){
+                if (nearbySearchCheckBox.isChecked() && zipcodeRadioButton.isChecked()) {
+                    if (zipcodeAutoText.getText().toString().length() == 0) {
                         zipcodeError.setVisibility(View.VISIBLE);
                         Toast.makeText(getContext(), "Please fix all fields with error", Toast.LENGTH_SHORT).show();
                         return;
@@ -187,31 +184,31 @@ public class SearchTabFragment extends Fragment {
                 }
 
 
-                if(currentLocationRadioButton.isChecked())
+                if (currentLocationRadioButton.isChecked())
                     zipcode = ip_zipcode[0];
                 else
-                    zipcode = new String(zipcodeEditText.getText().toString());
+                    zipcode = new String(zipcodeAutoText.getText().toString());
 
                 if (milesFromText.getText().toString().length() == 0)
                     milesFromText.setText("10");
 
 
                 StringBuilder url = new StringBuilder("https://csci571-hw8.azurewebsites.net/api/search?");
-                url.append("keywords="+keywordText.getText().toString());
-                url.append("&zipcode="+zipcode);
+                url.append("keywords=" + keywordText.getText().toString());
+                url.append("&zipcode=" + zipcode);
 
-                if(!categories.get(categoryDropdown.getSelectedItem().toString()).equals("0")){
-                    url.append("&category="+categories.get(categoryDropdown.getSelectedItem().toString()));
+                if (!categories.get(categoryDropdown.getSelectedItem().toString()).equals("0")) {
+                    url.append("&category=" + categories.get(categoryDropdown.getSelectedItem().toString()));
                 }
-                if(!nearbySearchCheckBox.isChecked()){
-                    url.append("&maxDistance="+"10000");
-                } else url.append("&maxDistance="+milesFromText.getText().toString());
+                if (!nearbySearchCheckBox.isChecked()) {
+                    url.append("&maxDistance=" + "10000");
+                } else url.append("&maxDistance=" + milesFromText.getText().toString());
 
-                if(freeShippingCheckBox.isChecked()) url.append("&freeShippingOnly=true");
-                if(localPickupCheckBox.isChecked()) url.append("&localPickupOnly=true");
-                if(newCheckBox.isChecked()) url.append("&new=true");
-                if(usedCheckBox.isChecked()) url.append("&used=true");
-                if(unspecifiedCheckBox.isChecked()) url.append("&unspecified=true");
+                if (freeShippingCheckBox.isChecked()) url.append("&freeShippingOnly=true");
+                if (localPickupCheckBox.isChecked()) url.append("&localPickupOnly=true");
+                if (newCheckBox.isChecked()) url.append("&new=true");
+                if (usedCheckBox.isChecked()) url.append("&used=true");
+                if (unspecifiedCheckBox.isChecked()) url.append("&unspecified=true");
                 Intent intent = new Intent(getContext(), SearchResultsActivity.class);
                 intent.putExtra("URL", url.toString());
                 startActivity(intent);
