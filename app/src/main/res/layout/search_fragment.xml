@@ -28,6 +28,7 @@
             android:ems="10"
             android:hint="Enter Keyword"
             android:inputType="text"
+            android:text="iphone"
             tools:layout_editor_absoluteX="110dp"
             tools:layout_editor_absoluteY="133dp" />
 

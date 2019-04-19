@@ -19,6 +19,15 @@ public class SearchResultCardAdapter extends RecyclerView.Adapter<SearchResultCa
 
     private List<SearchResultCard> searchResultCards;
     private Context context;
+    private OnItemClickListener mListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
 
     public SearchResultCardAdapter(List<SearchResultCard> searchResultCards, Context context) {
         this.searchResultCards = searchResultCards;
@@ -73,7 +82,7 @@ public class SearchResultCardAdapter extends RecyclerView.Adapter<SearchResultCa
         public TextView conditionTextView;
         public TextView priceTextView;
 
-        public ViewHolder( View itemView) {
+        public ViewHolder(View itemView) {
             super(itemView);
             productImageView = itemView.findViewById(R.id.productImageView);
             productTitleView = itemView.findViewById(R.id.productTitleView);
@@ -82,6 +91,19 @@ public class SearchResultCardAdapter extends RecyclerView.Adapter<SearchResultCa
             cartButton = itemView.findViewById(R.id.cartButton);
             conditionTextView = itemView.findViewById(R.id.conditionTextView);
             priceTextView = itemView.findViewById(R.id.priceTextView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            mListener.onItemClick(position);
+                        }
+
+                    }
+                }
+            });
         }
     }
 }
