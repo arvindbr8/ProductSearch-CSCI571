@@ -1,5 +1,7 @@
 package com.bright.productsearch;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -9,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -27,6 +30,10 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private ProductTabFragment productTabFragment;
     private ShippingTabFragment shippingTabFragment;
     private GoogleTabFragment googleTabFragment;
+    private SimilarTabFragment similarTabFragment;
+    public String URL;
+    public String imageURL;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +65,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         productTabFragment = new ProductTabFragment();
         shippingTabFragment = new ShippingTabFragment();
         googleTabFragment = new GoogleTabFragment();
+        similarTabFragment = new SimilarTabFragment();
 
         try {
             setupViewPager(mViewPager);
@@ -112,17 +120,35 @@ public class ProductDetailsActivity extends AppCompatActivity {
         productTabFragment.setArguments(bundle);
         shippingTabFragment.setArguments(bundle);
         googleTabFragment.setArguments(bundle);
+        similarTabFragment.setArguments(bundle);
 
         mSectionsPageAdapter.addFragment(productTabFragment, "PRODUCT");
         mSectionsPageAdapter.addFragment(shippingTabFragment, "SHIPPING");
         mSectionsPageAdapter.addFragment(googleTabFragment, "PHOTOS");
-        mSectionsPageAdapter.addFragment(new WishlistTabFragment(), "SIMILAR");
+        mSectionsPageAdapter.addFragment(similarTabFragment, "SIMILAR");
         viewPager.setAdapter(mSectionsPageAdapter);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.product_details, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.fb) {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                    "http://www.facebook.com/sharer.php?s=100" +
+                            "&quote=" + title +
+                            "&u=" + URL +
+                            "&picture=" + imageURL +
+                            "&hashtag=" + "%23CSCI571Spring2019Ebay"
+            ));
+            startActivity(browserIntent);
+
+        }
         finish();
         return true;
     }

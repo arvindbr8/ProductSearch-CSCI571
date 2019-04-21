@@ -38,13 +38,17 @@ public class ProductTabFragment extends Fragment {
     private TextView shippingTextView;
     private ExpandableHeightListView highlightsListView;
     private ExpandableHeightListView specificationsListView;
+    private ProductDetailsActivity productDetailsActivity;
 
     private JSONObject responseObject;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.product_fragment, container, false);
+
+        productDetailsActivity = (ProductDetailsActivity) getActivity();
+
 
         view.findViewById(R.id.progressBarInProduct).setVisibility(View.VISIBLE);
         view.findViewById(R.id.progressTitleInProduct).setVisibility(View.VISIBLE);
@@ -94,6 +98,8 @@ public class ProductTabFragment extends Fragment {
 
                                         //loading images
                                         JSONArray urlArray = responseObject.getJSONArray("ProductImages");
+                                        productDetailsActivity.imageURL = urlArray.getString(0);
+
                                         for (int i = 0; i < urlArray.length(); i++) {
                                             urls.add(urlArray.getString(i));
 
@@ -112,12 +118,16 @@ public class ProductTabFragment extends Fragment {
                                     case "Subtitle":
                                         highlights.add(new DataModel("Subtitle", responseObject.getString("Subtitle")));
                                         break;
+                                    case "URL":
+                                        productDetailsActivity.URL = responseObject.getString("URL");
+                                        break;
                                     case "Id":
                                     case "Brand":
-                                    case "URL":
                                         break;
                                     default:
-                                        specifications.add("\u2022 " + responseObject.get(key).toString());
+                                        specifications.add("\u2022 " +
+                                                responseObject.get(key).toString().substring(0, 1).toUpperCase() +
+                                                responseObject.get(key).toString().substring(1));
                                         break;
                                 }
                             }

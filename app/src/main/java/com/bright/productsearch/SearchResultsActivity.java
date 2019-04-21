@@ -103,7 +103,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                             searchResultCards.add(searchResultCard);
                         }
                     } catch (JSONException e){
-                        return;
+                        e.printStackTrace();
                     }
 
 
