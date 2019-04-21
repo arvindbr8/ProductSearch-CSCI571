@@ -44,7 +44,10 @@ public class ProductTabFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.product_fragment, container, false);
+        final View view = inflater.inflate(R.layout.product_fragment, container, false);
+
+        view.findViewById(R.id.progressBarInProduct).setVisibility(View.VISIBLE);
+        view.findViewById(R.id.progressTitleInProduct).setVisibility(View.VISIBLE);
 
         pictureGallery = view.findViewById(R.id.productImagesHorizontalView);
         productTitle = view.findViewById(R.id.productTitle);
@@ -118,6 +121,10 @@ public class ProductTabFragment extends Fragment {
                                         break;
                                 }
                             }
+                            view.findViewById(R.id.progressBarInProduct).setVisibility(View.GONE);
+                            view.findViewById(R.id.progressTitleInProduct).setVisibility(View.GONE);
+
+                            view.findViewById(R.id.layout).setVisibility(View.VISIBLE);
 
                             headingAdapter.notifyDataSetChanged();
                             specsAdapter.notifyDataSetChanged();

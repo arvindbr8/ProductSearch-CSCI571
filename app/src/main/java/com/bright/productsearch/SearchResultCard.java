@@ -8,6 +8,7 @@ public class SearchResultCard {
 
     private String productImageURL;
     private String productTitle;
+    private String productFullTitle;
     private String zipcode;
     private String shipping;
     private String cart;
@@ -16,9 +17,10 @@ public class SearchResultCard {
     private String Id;
     private JSONObject ShippingDetail;
 
-    public SearchResultCard(String productImageURL, String productTitle, String zipcode, String shipping, String cart, String condition, String price, String id, JSONObject shippingDetail) {
+    public SearchResultCard(String productImageURL, String productTitle, String productFullTitle, String zipcode, String shipping, String cart, String condition, String price, String id, JSONObject shippingDetail) {
         this.productImageURL = productImageURL;
         this.productTitle = productTitle;
+        this.productFullTitle = productFullTitle;
         this.zipcode = zipcode;
         this.shipping = shipping;
         this.cart = cart;
@@ -34,6 +36,10 @@ public class SearchResultCard {
 
     public String getProductTitle() {
         return productTitle;
+    }
+
+    public String getProductFullTitle() {
+        return productFullTitle;
     }
 
     public String getZipcode() {

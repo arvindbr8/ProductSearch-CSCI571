@@ -61,6 +61,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), ProductDetailsActivity.class);
                 intent.putExtra("id", id);
                 intent.putExtra("shippingDetails", shippingdetails.toString());
+                intent.putExtra("title", searchResultCards.get(position).getProductFullTitle());
                 startActivity(intent);
             }
         });
@@ -88,6 +89,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                             SearchResultCard searchResultCard = new SearchResultCard(
                                     searchResultIter.getString("Image"),
                                     searchResultIter.getString("Title"),
+                                    searchResultIter.getString("FullTitle"),
                                     searchResultIter.getString("Zip"),
                                     searchResultIter.getString("Shipping"),
 //                                    isInCart(searchResultIter.getString("Id"),

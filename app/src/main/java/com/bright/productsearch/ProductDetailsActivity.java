@@ -22,9 +22,11 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private TabLayout tabLayout;
     private String id;
+    private String title;
     private JSONObject shippingDetails;
     private ProductTabFragment productTabFragment;
-
+    private ShippingTabFragment shippingTabFragment;
+    private GoogleTabFragment googleTabFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +49,15 @@ public class ProductDetailsActivity extends AppCompatActivity {
         try {
             id = getIntent().getStringExtra("id");
             shippingDetails = new JSONObject(getIntent().getStringExtra("shippingDetails"));
+            title = getIntent().getStringExtra("title");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
         productTabFragment = new ProductTabFragment();
+        shippingTabFragment = new ShippingTabFragment();
+        googleTabFragment = new GoogleTabFragment();
 
         try {
             setupViewPager(mViewPager);
@@ -102,13 +107,15 @@ public class ProductDetailsActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putString("id", id);
         bundle.putString("shipping", shippingDetails.getString("ShippingCost"));
-
+        bundle.putString("shippingDetail", shippingDetails.toString());
+        bundle.putString("title", title);
         productTabFragment.setArguments(bundle);
-
+        shippingTabFragment.setArguments(bundle);
+        googleTabFragment.setArguments(bundle);
 
         mSectionsPageAdapter.addFragment(productTabFragment, "PRODUCT");
-        mSectionsPageAdapter.addFragment(new WishlistTabFragment(), "SHIPPING");
-        mSectionsPageAdapter.addFragment(new WishlistTabFragment(), "PHOTOS");
+        mSectionsPageAdapter.addFragment(shippingTabFragment, "SHIPPING");
+        mSectionsPageAdapter.addFragment(googleTabFragment, "PHOTOS");
         mSectionsPageAdapter.addFragment(new WishlistTabFragment(), "SIMILAR");
         viewPager.setAdapter(mSectionsPageAdapter);
     }
