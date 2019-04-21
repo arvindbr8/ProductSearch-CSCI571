@@ -23,6 +23,14 @@
             android:layout_weight="1" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/noresultsimilarpage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="100dp"
+        android:text="No Results"
+        android:textAlignment="center" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/similarItemRecycler"
         android:layout_width="match_parent"

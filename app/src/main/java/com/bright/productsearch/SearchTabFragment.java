@@ -189,8 +189,8 @@ public class SearchTabFragment extends Fragment {
                 else
                     zipcode = new String(zipcodeAutoText.getText().toString());
 
-                if (milesFromText.getText().toString().length() == 0)
-                    milesFromText.setText("10");
+//                if (milesFromText.getText().toString().length() == 0)
+//                    milesFromText.setText("10");
 
 
                 StringBuilder url = new StringBuilder("https://csci571-hw8.azurewebsites.net/api/search?");
@@ -202,7 +202,8 @@ public class SearchTabFragment extends Fragment {
                 }
                 if (!nearbySearchCheckBox.isChecked()) {
                     url.append("&maxDistance=" + "10000");
-                } else url.append("&maxDistance=" + milesFromText.getText().toString());
+                } else
+                    url.append("&maxDistance=" + (milesFromText.getText().toString().length() == 0 ? "10" : milesFromText.getText().toString()));
 
                 if (freeShippingCheckBox.isChecked()) url.append("&freeShippingOnly=true");
                 if (localPickupCheckBox.isChecked()) url.append("&localPickupOnly=true");
@@ -211,6 +212,7 @@ public class SearchTabFragment extends Fragment {
                 if (unspecifiedCheckBox.isChecked()) url.append("&unspecified=true");
                 Intent intent = new Intent(getContext(), SearchResultsActivity.class);
                 intent.putExtra("URL", url.toString());
+                intent.putExtra("keyword", keywordText.getText().toString());
                 startActivity(intent);
             }
         });

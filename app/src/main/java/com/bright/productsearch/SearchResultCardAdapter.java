@@ -104,6 +104,8 @@ public class SearchResultCardAdapter extends RecyclerView.Adapter<SearchResultCa
                     }
                 }
             });
+
+
         }
     }
 }

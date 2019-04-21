@@ -41,12 +41,14 @@ public class SimilarTabFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.similar_fragment, container, false);
+        final View view = inflater.inflate(R.layout.similar_fragment, container, false);
         similarItemsRecycler = view.findViewById(R.id.similarItemRecycler);
         similarItemCards = new ArrayList<>();
 
         sortItemSpinner = view.findViewById(R.id.sortTypeSpinner);
         sortOrderSpinner = view.findViewById(R.id.sortOrderSpinner);
+
+        view.findViewById(R.id.noresultsimilarpage).setVisibility(View.GONE);
 
         jsonResponse = new JSONArray();
 
@@ -56,12 +58,16 @@ public class SimilarTabFragment extends Fragment {
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 "http://csci571-hw8.azurewebsites.net/api/similarItems?id=" + getArguments().getString("id"),
+//                "http://csci571-hw8.azurewebsites.net/api/similarItems?id=183454743771",
                 null,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         try {
                             jsonResponse = response;
+                            if (response.length() == 0) {
+                                view.findViewById(R.id.noresultsimilarpage).setVisibility(View.VISIBLE);
+                            }
                             for (int i = 0; i < response.length(); i++) {
                                 similarItemCards.add(new SimilarItemCard(
                                         response.getJSONObject(i).getString("ImageURL"),
