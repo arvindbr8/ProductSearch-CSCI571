@@ -49,6 +49,7 @@ public class ProductTabFragment extends Fragment {
 
         productDetailsActivity = (ProductDetailsActivity) getActivity();
 
+        view.findViewById(R.id.layout).setVisibility(View.GONE);
 
         view.findViewById(R.id.progressBarInProduct).setVisibility(View.VISIBLE);
         view.findViewById(R.id.progressTitleInProduct).setVisibility(View.VISIBLE);
@@ -116,13 +117,15 @@ public class ProductTabFragment extends Fragment {
                                         highlights.add(new DataModel("Price", responseObject.getString("Price").replace(" ", "")));
                                         break;
                                     case "Subtitle":
-                                        highlights.add(new DataModel("Subtitle", responseObject.getString("Subtitle")));
+                                        if (!responseObject.getString("Subtitle").equals("N/A"))
+                                            highlights.add(new DataModel("Subtitle", responseObject.getString("Subtitle")));
                                         break;
                                     case "URL":
                                         productDetailsActivity.URL = responseObject.getString("URL");
                                         break;
                                     case "Id":
                                     case "Brand":
+                                    case "ImageURL":
                                         break;
                                     default:
                                         specifications.add("\u2022 " +
@@ -131,17 +134,17 @@ public class ProductTabFragment extends Fragment {
                                         break;
                                 }
                             }
-                            view.findViewById(R.id.progressBarInProduct).setVisibility(View.GONE);
-                            view.findViewById(R.id.progressTitleInProduct).setVisibility(View.GONE);
 
-                            view.findViewById(R.id.layout).setVisibility(View.VISIBLE);
 
                             headingAdapter.notifyDataSetChanged();
                             specsAdapter.notifyDataSetChanged();
                             String price = getArguments().getString("shipping").equals("$0.0") ? "Free" : getArguments().getString("shipping");
                             shippingTextView.setText("With " + price + " Shipping");
 
+                            view.findViewById(R.id.progressBarInProduct).setVisibility(View.GONE);
+                            view.findViewById(R.id.progressTitleInProduct).setVisibility(View.GONE);
 
+                            view.findViewById(R.id.layout).setVisibility(View.VISIBLE);
                             //rest
 
 
