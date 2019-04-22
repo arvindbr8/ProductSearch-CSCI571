@@ -20,7 +20,8 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class SearchResultCardAdapter extends RecyclerView.Adapter<SearchResultCardAdapter.ViewHolder> {
+
+public class WishlistCardAdapter extends RecyclerView.Adapter<WishlistCardAdapter.ViewHolder> {
 
     private List<SearchResultCard> searchResultCards;
     private Context context;
@@ -28,7 +29,6 @@ public class SearchResultCardAdapter extends RecyclerView.Adapter<SearchResultCa
     private SharedPreferences prefs;
 
     private JSONObject wishListItem;
-
 
 
     public interface OnItemClickListener {
@@ -39,23 +39,23 @@ public class SearchResultCardAdapter extends RecyclerView.Adapter<SearchResultCa
         mListener = listener;
     }
 
-    public SearchResultCardAdapter(List<SearchResultCard> searchResultCards, Context context) {
+    public WishlistCardAdapter(List<SearchResultCard> searchResultCards, Context context) {
         this.searchResultCards = searchResultCards;
         this.context = context;
         prefs = context.getSharedPreferences("WISH_LIST", Context.MODE_PRIVATE);
     }
 
     @Override
-    public ViewHolder onCreateViewHolder( ViewGroup viewGroup, int i) {
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.search_result_card, null);
-        return new ViewHolder(view);
+        return new WishlistCardAdapter.ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         SearchResultCard card = searchResultCards.get(i);
-        Log.d("IMAGEURL",card.getProductImageURL());
+        Log.d("IMAGEURL", card.getProductImageURL());
         Picasso.Builder builder = new Picasso.Builder(context);
         builder.listener(new Picasso.Listener() {
             @Override
@@ -84,7 +84,17 @@ public class SearchResultCardAdapter extends RecyclerView.Adapter<SearchResultCa
         viewHolder.conditionTextView.setText(card.getCondition());
         viewHolder.priceTextView.setText(card.getPrice());
 
-
+        wishListItem = new JSONObject();
+        try {
+            wishListItem.put("title", card.getProductTitle());
+            wishListItem.put("imageURL", card.getProductImageURL());
+            wishListItem.put("zip", card.getZipcode());
+            wishListItem.put("shipping", card.getShipping());
+            wishListItem.put("condition", card.getCondition());
+            wishListItem.put("price", card.getPrice());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -92,7 +102,7 @@ public class SearchResultCardAdapter extends RecyclerView.Adapter<SearchResultCa
         return searchResultCards.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView productImageView;
         public TextView productTitleView;
         public TextView zipcodeTextView;
@@ -132,29 +142,35 @@ public class SearchResultCardAdapter extends RecyclerView.Adapter<SearchResultCa
                     SharedPreferences.Editor editor = prefs.edit();
                     if (prefs.getString(card.getId(), null) != null) {
                         editor.remove(card.getId());
+                        editor.apply();
+                        searchResultCards.clear();
+                        for (String id : prefs.getAll().keySet()) {
+                            try {
+                                JSONObject wishlistItem = new JSONObject(prefs.getString(id, null));
+                                searchResultCards.add(new SearchResultCard(
+                                        wishlistItem.getString("imageURL"),
+                                        wishlistItem.getString("title"),
+                                        wishlistItem.getString("fullTitle"),
+                                        wishlistItem.getString("zip"),
+                                        wishlistItem.getString("shipping"),
+                                        wishlistItem.getString("title"),
+                                        wishlistItem.getString("condition"),
+                                        wishlistItem.getString("price"),
+                                        id,
+                                        new JSONObject(wishlistItem.getString("shippingDetail"))
+                                ));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         cartButton.setImageResource(R.drawable.cart_plus);
                         Toast.makeText(context, card.getProductTitle() + " was removed from the wish list", Toast.LENGTH_SHORT).show();
-                    } else {
-                        wishListItem = new JSONObject();
-                        try {
-                            wishListItem.put("title", card.getProductTitle());
-                            wishListItem.put("fullTitle", card.getProductFullTitle());
-                            wishListItem.put("imageURL", card.getProductImageURL());
-                            wishListItem.put("shippingDetail", card.getShippingDetail().toString());
-                            wishListItem.put("zip", card.getZipcode());
-                            wishListItem.put("shipping", card.getShipping());
-                            wishListItem.put("condition", card.getCondition());
-                            wishListItem.put("price", card.getPrice());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        editor.putString(card.getId(), wishListItem.toString());
-                        cartButton.setImageResource(R.drawable.cart_remove);
-                        Toast.makeText(context, card.getProductTitle() + " was added to the wish list", Toast.LENGTH_SHORT).show();
                     }
-                    editor.apply();
+                    notifyDataSetChanged();
+
                 }
             });
         }
     }
+
 }

@@ -1,10 +1,10 @@
 package com.bright.productsearch;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +34,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private SimilarTabFragment similarTabFragment;
     public String URL;
     public String imageURL;
+    public FloatingActionButton cart;
 
 
     @Override
@@ -52,6 +54,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         tabLayout = findViewById(R.id.productDetailsTabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        cart = findViewById(R.id.fab);
 
         try {
             id = getIntent().getStringExtra("id");
@@ -61,6 +64,14 @@ public class ProductDetailsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        final SharedPreferences sharedPreferences = getSharedPreferences("WISH_LIST", MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        if (sharedPreferences.getString(id, null) != null) {
+            cart.setImageResource(R.drawable.cart_remove);
+        } else {
+            cart.setImageResource(R.drawable.cart_plus);
+        }
 
         productTabFragment = new ProductTabFragment();
         shippingTabFragment = new ShippingTabFragment();
@@ -74,16 +85,22 @@ public class ProductDetailsActivity extends AppCompatActivity {
         }
         createTabIcons();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if (sharedPreferences.getString(id, null) != null) {
+                    editor.remove(id);
+                    cart.setImageResource(R.drawable.cart_plus);
+                    Toast.makeText(getApplicationContext(), title + " was removed from the wish list", Toast.LENGTH_SHORT).show();
+                } else {
+                    editor.putString(id, getIntent().getExtras().getString("wishList"));
+                    cart.setImageResource(R.drawable.cart_remove);
+                    Toast.makeText(getApplicationContext(), title + " was added to the wish list", Toast.LENGTH_SHORT).show();
+                }
+                editor.apply();
             }
         });
-
-
     }
 
     private void createTabIcons() {

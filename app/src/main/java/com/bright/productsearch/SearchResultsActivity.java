@@ -37,6 +37,8 @@ public class SearchResultsActivity extends AppCompatActivity {
     private SearchResultCardAdapter searchResultCardAdapter;
     private LinearLayout topOfResultsLayout;
 
+    private JSONObject wishListItem;
+
     private List<SearchResultCard> searchResultCards;
 
     @Override
@@ -49,7 +51,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         searchResultRecyclerView = findViewById(R.id.searchResultView);
         searchResultRecyclerView.setHasFixedSize(true);
-        searchResultRecyclerView.setLayoutManager(new GridLayoutManager(this,2 ));
+        searchResultRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
         resultNumberTitle = findViewById(R.id.resultNumTextView);
         resultKeywordTitle = findViewById(R.id.resultKeywordTextView);
@@ -58,7 +60,6 @@ public class SearchResultsActivity extends AppCompatActivity {
         searchResultRecyclerView.setVisibility(View.GONE);
         topOfResultsLayout.setVisibility(View.GONE);
         findViewById(R.id.noresults).setVisibility(View.GONE);
-
 
 
         searchResultCards = new ArrayList<>();
@@ -75,6 +76,19 @@ public class SearchResultsActivity extends AppCompatActivity {
                 intent.putExtra("id", id);
                 intent.putExtra("shippingDetails", shippingdetails.toString());
                 intent.putExtra("title", searchResultCards.get(position).getProductFullTitle());
+                wishListItem = new JSONObject();
+                try {
+                    wishListItem.put("title", searchResultCards.get(position).getProductTitle());
+                    wishListItem.put("imageURL", searchResultCards.get(position).getProductImageURL());
+                    wishListItem.put("zip", searchResultCards.get(position).getZipcode());
+                    wishListItem.put("shipping", searchResultCards.get(position).getShipping());
+                    wishListItem.put("condition", searchResultCards.get(position).getCondition());
+                    wishListItem.put("price", searchResultCards.get(position).getPrice());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                intent.putExtra("wishList", wishListItem.toString());
+
                 startActivity(intent);
             }
         });
@@ -121,7 +135,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                             );
                             searchResultCards.add(searchResultCard);
                         }
-                    } catch (JSONException e){
+                    } catch (JSONException e) {
 
                         e.printStackTrace();
                         return;
@@ -150,7 +164,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         }
     }
 
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
         finish();
         return true;
     }

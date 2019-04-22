@@ -180,6 +180,8 @@ public class ProductTabFragment extends Fragment {
         });
         builder.build()
                 .load(path)
+                .fit()
+                .centerInside()
                 .into(imageView);
         layout.addView(imageView);
         return layout;
