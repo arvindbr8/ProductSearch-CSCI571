@@ -221,7 +221,7 @@ public class ShippingTabFragment extends Fragment {
                             if (sellerInfoResponse.has("RefundMode")) {
                                 view.findViewById(R.id.refundLayout).setVisibility(View.VISIBLE);
                                 view.findViewById(R.id.returnPolicyLayoutTable).findViewById(R.id.refundModeLayout).setVisibility(View.VISIBLE);
-                                returnsWithinView.setText(sellerInfoResponse.getString("RefundMode"));
+                                refundsModeView.setText(sellerInfoResponse.getString("RefundMode"));
                             }
 
                             if (sellerInfoResponse.has("ShippedBy")) {

@@ -93,6 +93,22 @@ public class WishlistTabFragment extends Fragment {
 
                 startActivity(intent);
             }
+
+            @Override
+            public void updateFooter() {
+                totalPrice = 0;
+                for (String id : sharedPreferences.getAll().keySet()) {
+                    try {
+                        JSONObject wishlistItem = new JSONObject(sharedPreferences.getString(id, null));
+                        totalPrice += Float.parseFloat(wishlistItem.getString("price").replace("$", ""));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                String footerText = "Wishlist total(" + String.valueOf(sharedPreferences.getAll().size()) + "items):";
+                wishListFooterView.setText(footerText);
+                wishItemTotalView.setText(pound.concat(String.valueOf(totalPrice)));
+            }
         });
 
         for (String id : sharedPreferences.getAll().keySet()) {

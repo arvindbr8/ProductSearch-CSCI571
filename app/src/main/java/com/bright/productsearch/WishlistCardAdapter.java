@@ -33,6 +33,8 @@ public class WishlistCardAdapter extends RecyclerView.Adapter<WishlistCardAdapte
 
     public interface OnItemClickListener {
         void onItemClick(int position);
+
+        void updateFooter();
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -167,6 +169,8 @@ public class WishlistCardAdapter extends RecyclerView.Adapter<WishlistCardAdapte
                         Toast.makeText(context, card.getProductTitle() + " was removed from the wish list", Toast.LENGTH_SHORT).show();
                     }
                     notifyDataSetChanged();
+                    mListener.updateFooter();
+
 
                 }
             });
