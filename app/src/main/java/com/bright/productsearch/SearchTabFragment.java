@@ -109,6 +109,7 @@ public class SearchTabFragment extends Fragment {
         zipcodeRadioButton = view.findViewById(R.id.zipcodeRadioButton);
         zipcodeAutoText = view.findViewById(R.id.zipcodeAutoTextView);
         zipcodeError = view.findViewById(R.id.zipcodeError);
+        zipcodeAutoText.setEnabled(false);
         currentLocationRadioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
