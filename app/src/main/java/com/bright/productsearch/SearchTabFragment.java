@@ -141,6 +141,20 @@ public class SearchTabFragment extends Fragment {
         milesFromText = view.findViewById(R.id.milesFromEditText);
 
 
+        clearButton = view.findViewById(R.id.clearButton);
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                keywordText.setText("");
+                newCheckBox.setChecked(false);
+                usedCheckBox.setChecked(false);
+                unspecifiedCheckBox.setChecked(false);
+                milesFromText.setText("");
+                zipcodeAutoText.setText("");
+                nearbySearchCheckBox.setChecked(false);
+            }
+        });
+
         RequestQueue queue = Volley.newRequestQueue(getContext());
         final String[] ip_zipcode = new String[1];
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, "http://ip-api.com/json", null, new Response.Listener<JSONObject>() {

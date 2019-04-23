@@ -100,14 +100,17 @@ public class ProductTabFragment extends Fragment {
                                         //loading images
                                         JSONArray urlArray = responseObject.getJSONArray("ProductImages");
                                         productDetailsActivity.imageURL = urlArray.getString(0);
+                                        if (urlArray.length() == 0) {
+                                            pictureGallery.setVisibility(View.GONE);
+                                        } else {
+                                            for (int i = 0; i < urlArray.length(); i++) {
+                                                urls.add(urlArray.getString(i));
 
-                                        for (int i = 0; i < urlArray.length(); i++) {
-                                            urls.add(urlArray.getString(i));
 
-
+                                            }
+                                            for (int i = 0; i < urls.size(); i++)
+                                                pictureGallery.addView(insertPhoto(urls.get(i)));
                                         }
-                                        for (int i = 0; i < urls.size(); i++)
-                                            pictureGallery.addView(insertPhoto(urls.get(i)));
                                         break;
                                     case "Title":
                                         productTitle.setText(responseObject.getString("Title"));
