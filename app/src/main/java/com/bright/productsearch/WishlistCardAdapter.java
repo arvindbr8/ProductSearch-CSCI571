@@ -33,7 +33,6 @@ public class WishlistCardAdapter extends RecyclerView.Adapter<WishlistCardAdapte
 
     public interface OnItemClickListener {
         void onItemClick(int position);
-
         void updateFooter();
     }
 
